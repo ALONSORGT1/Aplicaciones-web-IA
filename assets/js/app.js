@@ -1,5 +1,5 @@
 const API_URL =
-   "https://TU-PROYECTO.vercel.app/api/chat";
+   "https://aplicaciones-web-mtekwqp4n-acme-2f81.vercel.app/api/chat";
 
 const form = document.getElementById("chatForm");
 const input = document.getElementById("messageInput");
