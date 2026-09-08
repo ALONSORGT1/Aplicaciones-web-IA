@@ -149,12 +149,17 @@ class handler(BaseHTTPRequestHandler):
                Responde siempre en español, de manera clara,
                breve y didáctica. Incluye ejemplos cuando ayuden
                a comprender el concepto.
+               Organiza las respuestas con Markdown: párrafos cortos,
+               encabezados cuando sean útiles, listas para pasos y
+               tablas para comparaciones. Usa bloques de código con
+               el nombre del lenguaje y explica los ejemplos.
+               Evita bloques largos de texto y no uses HTML.
                """,
                input=message,
                reasoning={
                    "effort": "none"
                },
-               max_output_tokens=500
+               max_output_tokens=1200
            )
 
            self.send_json(

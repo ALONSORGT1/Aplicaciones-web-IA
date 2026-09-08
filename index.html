@@ -1,45 +1,183 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Chat IA</title>
-   <link rel="stylesheet" href="assets/css/styles.css">
-</head>
-<body>
-
-   <main class="app">
-       <header class="header">
-           <div>
-               <h1>Chat IA</h1>
-               <p>Inteligencia Artificial aplicada a las TIC</p>
-           </div>
-           <span class="status">● IA disponible</span>
-       </header>
-
-       <section id="messages" class="messages" aria-live="polite">
-           <div class="message assistant">
-               <div class="message-label">IA</div>
-               <div class="message-content">
-                   Hola. Soy tu asistente de Inteligencia Artificial.
-                   ¿En qué puedo ayudarte?
-               </div>
-           </div>
-       </section>
-
-       <form id="chatForm" class="chat-form">
-           <input
-               id="messageInput"
-               type="text"
-               maxlength="1000"
-               placeholder="Escribe una pregunta..."
-               autocomplete="off"
-               required
-           >
-           <button id="sendButton" type="submit">Enviar</button>
-       </form>
-   </main>
-
-   <script src="assets/js/app.js?v=2"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, interactive-widget=resizes-content"
+    />
+    <meta name="theme-color" content="#f6f7f3" />
+    <meta
+      name="description"
+      content="Un espacio para entender la tecnología. Explora conceptos, compara ideas y aprende con ejemplos claros."
+    />
+    <title>Nexo — Tu espacio para entender</title>
+    <link rel="stylesheet" href="assets/css/styles.css?v=3" />
+  </head>
+  <body>
+    <aside class="sidebar">
+      <a class="brand" href="./" aria-label="Nexo, inicio"
+        ><span class="brand-mark">n<span>✳</span></span
+        ><span>nexo<span class="brand-dot">.</span></span></a
+      >
+      <p class="sidebar-caption">TU ESPACIO DE CONOCIMIENTO</p>
+      <button class="new-chat" id="newChat">
+        <span aria-hidden="true">＋</span> Nueva conversación
+      </button>
+      <div class="nav-label">ESPACIO DE TRABAJO</div>
+      <div class="nav-active">
+        <span aria-hidden="true">◈</span> Asistente TIC
+        <span class="nav-dot"></span>
+      </div>
+      <div class="sidebar-note">
+        <span class="note-symbol" aria-hidden="true">✳</span>
+        <h2>Las buenas preguntas<br />abren posibilidades.</h2>
+        <p>
+          Aprende un concepto, encuentra un ejemplo o mira un problema desde
+          otra perspectiva.
+        </p>
+      </div>
+      <footer class="sidebar-footer">
+        <span class="avatar">T</span>
+        <div>
+          Tecnologías de la información<small
+            >Aprender. Explorar. Comprender.</small
+          >
+        </div>
+      </footer>
+    </aside>
+    <main class="workspace">
+      <header class="topbar">
+        <div class="topbar-title">
+          <span class="mobile-brand">nexo.</span
+          ><span class="desktop-label">Asistente TIC</span
+          ><span class="tag">EDUCATIVO</span>
+        </div>
+        <div class="header-actions">
+          <button id="exportChat" class="quiet-button" disabled>
+            ↓ <span>Exportar</span></button
+          ><button
+            id="mobileNew"
+            class="quiet-button mobile-only"
+            aria-label="Nueva conversación"
+          >
+            ＋
+          </button>
+        </div>
+      </header>
+      <section
+        id="messages"
+        class="messages"
+        aria-label="Conversación"
+        tabindex="0"
+      >
+        <div class="conversation" id="conversation">
+          <section class="welcome" id="welcome">
+            <div class="eyebrow">
+              <span></span> UN POCO DE CURIOSIDAD, MUCHAS POSIBILIDADES
+            </div>
+            <h1>Las ideas se conectan.<br /><em>El conocimiento crece.</em></h1>
+            <p class="welcome-description">
+              Tu espacio para entender la tecnología, paso a paso.<br />Trae una
+              pregunta. Exploremos la respuesta.
+            </p>
+            <div class="suggestion-grid">
+              <button
+                class="suggestion"
+                data-prompt="Explícame qué es el Internet de las cosas con un ejemplo cotidiano."
+              >
+                <span class="card-icon">◎</span
+                ><strong>Entiende un concepto</strong
+                ><span>¿Cómo funciona el Internet de las cosas?</span
+                ><span class="card-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button
+                class="suggestion"
+                data-prompt="Compara la computación en la nube y los servidores locales en una tabla sencilla, con ventajas y desventajas."
+              >
+                <span class="card-icon">⇄</span
+                ><strong>Compara posibilidades</strong
+                ><span>La nube frente a un servidor local</span
+                ><span class="card-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button
+                class="suggestion"
+                data-prompt="Muéstrame un ejemplo sencillo en Python de cómo recorrer una lista. Explica el código paso a paso."
+              >
+                <span class="card-icon code-icon">&lt;/&gt;</span
+                ><strong>Lleva la idea a la práctica</strong
+                ><span>Un ejemplo de código, paso a paso</span
+                ><span class="card-arrow" aria-hidden="true">↗</span>
+              </button>
+            </div>
+            <div class="welcome-foot">
+              <span aria-hidden="true">✧</span> Explicaciones claras. Ejemplos
+              útiles. A tu ritmo.
+            </div>
+          </section>
+          <div id="thread"></div>
+        </div>
+      </section>
+      <div class="composer-area">
+        <button id="scrollLatest" class="latest-button" hidden>
+          ↓ Ir al último mensaje
+        </button>
+        <form id="chatForm" class="chat-form">
+          <label class="sr-only" for="messageInput">Escribe tu pregunta</label>
+          <textarea
+            id="messageInput"
+            rows="1"
+            maxlength="1000"
+            placeholder="¿Qué te gustaría entender hoy?"
+            required
+          ></textarea>
+          <div class="composer-tools">
+            <span class="composer-topic"
+              ><span aria-hidden="true">✳</span> Asistente de tecnología</span
+            >
+            <div class="send-tools">
+              <span id="characterCount">0 / 1000</span
+              ><button id="stopButton" class="stop-button" type="button" hidden>
+                Detener</button
+              ><button id="sendButton" type="submit" disabled>
+                <span>Enviar</span> <span aria-hidden="true">↑</span>
+              </button>
+            </div>
+          </div>
+        </form>
+        <div class="composer-caption">
+          <span
+            >La IA puede equivocarse. Verifica la información importante.</span
+          ><span class="keyboard-hint"
+            >Enter para enviar · Shift + Enter para otra línea</span
+          >
+        </div>
+        <p class="context-note">
+          Cada pregunta se responde de forma independiente. El historial se
+          conserva solo en esta pestaña.
+        </p>
+      </div>
+    </main>
+    <div
+      id="announcement"
+      class="sr-only"
+      role="status"
+      aria-live="polite"
+    ></div>
+    <div id="toast" class="toast" role="status" hidden></div>
+    <dialog id="resetDialog">
+      <h2>¿Empezamos de nuevo?</h2>
+      <p>
+        Se borrará el historial de esta pestaña. Puedes exportarlo antes de
+        continuar.
+      </p>
+      <div>
+        <button id="cancelReset" class="quiet-button">Conservar chat</button
+        ><button id="confirmReset" class="primary-button">
+          Nueva conversación
+        </button>
+      </div>
+    </dialog>
+    <script src="assets/js/app.js?v=3"></script>
+  </body>
 </html>

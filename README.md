@@ -10,7 +10,7 @@ Proyecto educativo de la materia **Inteligencia Artificial aplicada a las TIC**.
 - Envía la pregunta a un servidor Python y muestra la respuesta o un mensaje de error.
 - Desactiva temporalmente el formulario durante cada consulta.
 
-Cada consulta envía únicamente el mensaje actual: el modelo no recibe el historial de la conversación. Los mensajes visibles permanecen en la página mientras está abierta y se pierden al recargarla.
+Cada consulta envía únicamente el mensaje actual: el modelo no recibe el historial de la conversación. El historial se guarda en sessionStorage y se restaura al recargar la misma pestaña. Puede exportarse a Markdown o borrarse con Nueva conversación. No se envía como contexto al modelo.
 
 ## Estructura del proyecto
 
@@ -142,7 +142,7 @@ El archivo `.gitignore` excluye `.env` y `.env.*`, entre otros archivos locales.
 
 ## Estado actual y comprobación
 
-Los archivos de la interfaz, el backend y la configuración inicial están creados. La URL del frontend conserva el marcador `TU-PROYECTO`; todavía es necesario conectar los despliegues reales y configurar las variables del servidor.
+El frontend utiliza https://aplicaciones-web-ia.vercel.app/api/chat y se publica en GitHub Pages. Vercel ejecuta el backend mediante el repositorio conectado.
 
 Para comprobar la integración una vez publicada:
 
@@ -152,3 +152,23 @@ Para comprobar la integración una vez publicada:
 4. Si aparece un error, revisa la URL del backend, las variables de entorno y los registros de la función en Vercel.
 
 La presencia de los archivos no confirma por sí sola que la consulta real a la IA funcione. Actualiza este README conforme agregues funcionalidades o cambies la configuración del programa.
+
+## Interfaz Nexo
+
+El diseño utiliza tonos claros y verdes, navegación lateral en escritorio y una distribución compacta en celulares. El contenedor ocupa la altura disponible de la ventana: solo la conversación tiene desplazamiento vertical, mientras el formulario permanece visible. La altura se ajusta al área visible cuando se abre el teclado móvil.
+
+Funciones disponibles:
+
+- Preguntas sugeridas editables antes de enviar.
+- Editor multilínea con contador de 1000 caracteres; Enter envía en escritorio y Shift + Enter agrega una línea. En dispositivos táctiles se utiliza el botón Enviar.
+- Respuestas con títulos, negritas, listas, tablas, citas y bloques de código con botón para copiar.
+- Renderizado de un subconjunto de Markdown mediante nodos DOM y texto, sin interpretar HTML de las respuestas.
+- Copiar respuesta, exportar el historial como archivo Markdown y nueva conversación con confirmación.
+- Historial guardado en la pestaña mediante sessionStorage, sin base de datos de conversaciones.
+- Indicador de carga, cancelación de la espera, tiempo máximo de espera de 60 segundos y reintento de errores. Cancelar la espera no garantiza que el servidor deje de procesar la consulta.
+- Botón para ir al último mensaje sin desplazar automáticamente al usuario mientras lee respuestas anteriores.
+- Etiquetas accesibles, avisos para lectores de pantalla, foco visible y respeto de la preferencia de movimiento reducido.
+
+El backend recibe instrucciones para organizar las respuestas en Markdown y admite hasta 1200 tokens de salida. Una respuesta puede alcanzar ese límite antes de completar una explicación extensa.
+
+El diseño mejora la experiencia de uso, pero la aplicación aún no incorpora autenticación, cuotas por usuario ni almacenamiento de conversaciones en servidor. Estas capacidades requieren trabajo adicional para un servicio público a mayor escala.
