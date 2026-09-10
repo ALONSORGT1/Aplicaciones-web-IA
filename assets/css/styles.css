@@ -466,6 +466,18 @@ textarea:focus-visible,
   font-size: 9px;
   line-height: 1.5;
 }
+.developer-credit {
+  margin: 8px auto 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: center;
+}
+.developer-credit strong {
+  color: var(--green);
+  font-weight: 600;
+  white-space: nowrap;
+}
 .latest-button {
   position: absolute;
   top: -37px;
@@ -967,5 +979,153 @@ dialog > div {
     animation: none !important;
     scroll-behavior: auto !important;
     transition: none !important;
+  }
+}
+
+/* Theme toggle and dark palette; the light design remains the default. */
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  min-height: 38px;
+  padding: 8px;
+  flex-shrink: 0;
+}
+.theme-toggle svg {
+  width: 20px;
+  height: 20px;
+}
+.theme-sun {
+  display: none;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #e5ece5;
+  --muted: #a5b3a9;
+  --green: #aacb9e;
+  --accent: #dfe9a9;
+  --line: #35453b;
+  --paper: #151e1a;
+  --sidebar: #1b261f;
+}
+[data-theme="dark"] .theme-moon {
+  display: none;
+}
+[data-theme="dark"] .theme-sun {
+  display: block;
+}
+[data-theme="dark"] .brand-mark,
+[data-theme="dark"] #sendButton,
+[data-theme="dark"] .primary-button,
+[data-theme="dark"] .toast {
+  background: #adc99b;
+  color: #17241c;
+}
+[data-theme="dark"] #sendButton:hover:not(:disabled),
+[data-theme="dark"] .primary-button:hover {
+  background: #c3dab4;
+}
+[data-theme="dark"] .brand-mark span {
+  color: #315747;
+}
+[data-theme="dark"] .brand-dot,
+[data-theme="dark"] .eyebrow,
+[data-theme="dark"] .welcome h1 em,
+[data-theme="dark"] .note-symbol,
+[data-theme="dark"] .card-icon,
+[data-theme="dark"] .card-arrow,
+[data-theme="dark"] .welcome-foot > span,
+[data-theme="dark"] .composer-topic > span {
+  color: #adc395;
+}
+[data-theme="dark"] .new-chat,
+[data-theme="dark"] .tag,
+[data-theme="dark"] .sidebar-footer,
+[data-theme="dark"] .avatar {
+  border-color: var(--line);
+}
+[data-theme="dark"] .new-chat:hover,
+[data-theme="dark"] .quiet-button:hover,
+[data-theme="dark"] .message-actions button:hover {
+  background: #2c3d31;
+}
+[data-theme="dark"] .nav-active,
+[data-theme="dark"] .avatar,
+[data-theme="dark"] .message-avatar {
+  background: #2b3c2e;
+}
+[data-theme="dark"] .messages {
+  scrollbar-color: #52694f transparent;
+}
+[data-theme="dark"] .suggestion,
+[data-theme="dark"] .chat-form,
+[data-theme="dark"] .latest-button {
+  background: #202c24;
+  border-color: #40513f;
+}
+[data-theme="dark"] .suggestion:hover {
+  background: #2b3c2e;
+  border-color: #8da67b;
+}
+[data-theme="dark"] .chat-form:focus-within {
+  border-color: #adc395;
+  box-shadow: 0 0 0 3px #adc39518;
+}
+[data-theme="dark"] .chat-form textarea::placeholder {
+  color: #a5b3a9;
+}
+[data-theme="dark"] .stop-button,
+[data-theme="dark"] .message.user .message-content {
+  background: #2c3d31;
+  border-color: #40513f;
+}
+[data-theme="dark"] .message-content code {
+  background: #2d3c30;
+}
+[data-theme="dark"] .message-content pre {
+  background: #101812;
+  color: #e5ece5;
+}
+[data-theme="dark"] .message-content pre code {
+  background: transparent;
+}
+[data-theme="dark"] .code-bar {
+  background: #2b3c2e;
+  color: #dce7d1;
+}
+[data-theme="dark"] .message-content th {
+  background: #2b3c2e;
+}
+[data-theme="dark"] .message-content blockquote {
+  background: #263529;
+  color: #c1d1b7;
+  border-color: #95a775;
+}
+[data-theme="dark"] .message-content a {
+  color: #b3d7a4;
+}
+[data-theme="dark"] .message.error .message-content {
+  background: #3c2822;
+  border-color: #795344;
+  color: #f2b99e;
+}
+[data-theme="dark"] dialog::backdrop {
+  background: #070d0ac9;
+}
+@media (max-width: 400px) {
+  #exportChat {
+    font-size: 0;
+    padding: 8px;
+  }
+  #exportChat::before {
+    content: "↓";
+    font-size: 18px;
+  }
+  #exportChat span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
   }
 }

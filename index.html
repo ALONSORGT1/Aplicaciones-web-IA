@@ -12,7 +12,8 @@
       content="Un espacio para entender la tecnología. Explora conceptos, compara ideas y aprende con ejemplos claros."
     />
     <title>Nexo — Tu espacio para entender</title>
-    <link rel="stylesheet" href="assets/css/styles.css?v=3" />
+    <script src="assets/js/theme.js?v=1"></script>
+    <link rel="stylesheet" href="assets/css/styles.css?v=5" />
   </head>
   <body>
     <aside class="sidebar">
@@ -26,7 +27,7 @@
       </button>
       <div class="nav-label">ESPACIO DE TRABAJO</div>
       <div class="nav-active">
-        <span aria-hidden="true">◈</span> Asistente TIC
+        <span aria-hidden="true">◈</span> Redes y ciberseguridad
         <span class="nav-dot"></span>
       </div>
       <div class="sidebar-note">
@@ -50,10 +51,44 @@
       <header class="topbar">
         <div class="topbar-title">
           <span class="mobile-brand">nexo.</span
-          ><span class="desktop-label">Asistente TIC</span
+          ><span class="desktop-label">Redes y ciberseguridad</span
           ><span class="tag">EDUCATIVO</span>
         </div>
         <div class="header-actions">
+          <button
+            id="themeToggle"
+            class="quiet-button theme-toggle"
+            type="button"
+            aria-label="Activar modo oscuro"
+            title="Activar modo oscuro"
+          >
+            <svg
+              class="theme-moon"
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M20.5 13A8.5 8.5 0 0 1 11 3.5 8.5 8.5 0 1 0 20.5 13Z" />
+            </svg>
+            <svg
+              class="theme-sun"
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+            >
+              <circle cx="12" cy="12" r="4" />
+              <path
+                d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"
+              />
+            </svg>
+          </button>
           <button id="exportChat" class="quiet-button" disabled>
             ↓ <span>Exportar</span></button
           ><button
@@ -78,8 +113,8 @@
             </div>
             <h1>Las ideas se conectan.<br /><em>El conocimiento crece.</em></h1>
             <p class="welcome-description">
-              Tu espacio para entender la tecnología, paso a paso.<br />Trae una
-              pregunta. Exploremos la respuesta.
+              Hola, soy Nexo, tu asistente de redes y ciberseguridad.<br />
+              Exploremos cómo conectar y proteger tus sistemas, paso a paso.
             </p>
             <div class="suggestion-grid">
               <button
@@ -93,20 +128,20 @@
               </button>
               <button
                 class="suggestion"
-                data-prompt="Compara la computación en la nube y los servidores locales en una tabla sencilla, con ventajas y desventajas."
+                data-prompt="Compara TCP y UDP en una tabla sencilla con ejemplos de uso y sus diferencias de seguridad."
               >
                 <span class="card-icon">⇄</span
                 ><strong>Compara posibilidades</strong
-                ><span>La nube frente a un servidor local</span
+                ><span>TCP frente a UDP: ¿cuándo usar cada uno?</span
                 ><span class="card-arrow" aria-hidden="true">↗</span>
               </button>
               <button
                 class="suggestion"
-                data-prompt="Muéstrame un ejemplo sencillo en Python de cómo recorrer una lista. Explica el código paso a paso."
+                data-prompt="Explícame paso a paso cómo proteger el Wi-Fi de mi casa y cómo comprobar cada medida."
               >
                 <span class="card-icon code-icon">&lt;/&gt;</span
                 ><strong>Lleva la idea a la práctica</strong
-                ><span>Un ejemplo de código, paso a paso</span
+                ><span>Protege tu red Wi-Fi, paso a paso</span
                 ><span class="card-arrow" aria-hidden="true">↗</span>
               </button>
             </div>
@@ -133,7 +168,7 @@
           ></textarea>
           <div class="composer-tools">
             <span class="composer-topic"
-              ><span aria-hidden="true">✳</span> Asistente de tecnología</span
+              ><span aria-hidden="true">✳</span> Redes y seguridad</span
             >
             <div class="send-tools">
               <span id="characterCount">0 / 1000</span
@@ -153,9 +188,12 @@
           >
         </div>
         <p class="context-note">
-          Cada pregunta se responde de forma independiente. El historial se
-          conserva solo en esta pestaña.
+          Contexto: hasta 3 intercambios recientes (6000 caracteres). Nueva
+          conversación borra el historial de esta pestaña.
         </p>
+        <footer class="developer-credit">
+          Desarrollado por <strong>Alonso Ramírez G</strong>
+        </footer>
       </div>
     </main>
     <div
@@ -178,6 +216,6 @@
         </button>
       </div>
     </dialog>
-    <script src="assets/js/app.js?v=3"></script>
+    <script src="assets/js/app.js?v=4"></script>
   </body>
 </html>

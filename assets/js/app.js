@@ -5,6 +5,39 @@ const form = $("chatForm"),
   messages = $("messages"),
   thread = $("thread");
 const storageKey = "nexo-chat-v1";
+const HTTP_ERRORS = {
+  400: "La pregunta o el historial no son válidos. Revisa el texto o inicia una nueva conversación. (400)",
+  403: "Esta página no está autorizada para consultar al asistente. Revisa el origen permitido en Vercel. (403)",
+  413: "La consulta contiene demasiado contexto. Inicia una nueva conversación o acorta el mensaje. (413)",
+  500: "El servidor no pudo consultar la IA. Inténtalo más tarde; si continúa, revisa la configuración de Vercel. (500)",
+  429: "Hay demasiadas consultas en este momento. Espera un poco y vuelve a intentarlo. (429)",
+};
+
+// Only completed exchanges enter context; errors and canceled requests do not.
+function buildContext() {
+  const pairs = [];
+  let question = null;
+  for (const entry of entries) {
+    if (entry.role === "user") question = entry;
+    else {
+      if (question && !entry.error)
+        pairs.push([
+          { role: "user", content: question.text },
+          { role: "assistant", content: entry.text },
+        ]);
+      question = null;
+    }
+  }
+  const selected = [];
+  let length = 0;
+  for (const pair of pairs.slice(-3).reverse()) {
+    const size = pair.reduce((total, item) => total + item.content.length, 0);
+    if (length + size > 6000) break;
+    selected.unshift(...pair);
+    length += size;
+  }
+  return selected;
+}
 let entries = [],
   busy = false,
   controller = null,
@@ -232,7 +265,7 @@ function renderEntry(entry) {
       const retry = element("button", "", "Reintentar");
       retry.type = "button";
       retry.addEventListener("click", () => {
-        if (!busy) send(entry.prompt, false);
+        if (!busy) send(entry.prompt);
       });
       actions.append(retry);
     }
@@ -270,12 +303,11 @@ function setBusy(value) {
   thread.setAttribute("aria-busy", String(value));
   resizeInput();
 }
-async function send(prompt, addUser = true) {
+async function send(prompt) {
   if (busy || !prompt.trim() || prompt.length > 1000) return;
-  if (addUser) {
-    addEntry("user", prompt);
-    input.value = "";
-  }
+  const history = buildContext();
+  addEntry("user", prompt);
+  input.value = "";
   setBusy(true);
   controller = new AbortController();
   const loading = element("div", "message"),
@@ -300,9 +332,11 @@ async function send(prompt, addUser = true) {
     const response = await fetch(API_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: prompt }),
+      body: JSON.stringify({ message: prompt, history }),
       signal: controller.signal,
     });
+    if (!response.ok && HTTP_ERRORS[response.status])
+      throw new Error(HTTP_ERRORS[response.status]);
     if (!response.headers.get("content-type")?.includes("application/json"))
       throw new Error(
         "El servidor no devolvió una respuesta válida. Inténtalo de nuevo en unos minutos.",
@@ -310,10 +344,7 @@ async function send(prompt, addUser = true) {
     const data = await response.json();
     if (!response.ok)
       throw new Error(
-        response.status === 429
-          ? "Hay demasiadas consultas en este momento. Espera un poco y vuelve a intentarlo."
-          : data.error ||
-              "No pudimos completar la consulta. Inténtalo nuevamente.",
+        data.error || "No pudimos completar la consulta. Inténtalo nuevamente.",
       );
     if (typeof data.reply !== "string" || !data.reply.trim())
       throw new Error(

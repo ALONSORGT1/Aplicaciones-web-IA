@@ -10,6 +10,39 @@ ALLOWED_ORIGIN = os.environ.get(
    ""
 ).rstrip("/")
 
+MAX_BODY_BYTES = 48000
+MAX_HISTORY_MESSAGES = 6
+MAX_HISTORY_CHARS = 6000
+
+
+def validate_input(data):
+   if not isinstance(data, dict):
+       raise ValueError("La petición debe ser un objeto JSON.")
+   message = data.get("message")
+   if not isinstance(message, str) or not message.strip():
+       raise ValueError("Es necesario escribir un mensaje de texto.")
+   message = message.strip()
+   if len(message) > 1000:
+       raise ValueError("El mensaje supera los 1000 caracteres.")
+   history = data.get("history", [])
+   if not isinstance(history, list) or len(history) % 2:
+       raise ValueError("El historial debe contener pares user y assistant.")
+   if len(history) > MAX_HISTORY_MESSAGES:
+       raise OverflowError("El historial supera los 6 mensajes permitidos.")
+   result, total = [], 0
+   for index, item in enumerate(history):
+       role = "user" if index % 2 == 0 else "assistant"
+       if not isinstance(item, dict) or item.get("role") != role:
+           raise ValueError("El historial solo admite pares user y assistant.")
+       content = item.get("content")
+       if not isinstance(content, str) or not content.strip():
+           raise ValueError("Cada mensaje del historial debe contener texto.")
+       total += len(content)
+       if total > MAX_HISTORY_CHARS:
+           raise OverflowError("El historial supera los 6000 caracteres.")
+       result.append({"role": role, "content": content})
+   return result + [{"role": "user", "content": message}]
+
 
 class handler(BaseHTTPRequestHandler):
 
@@ -91,11 +124,15 @@ class handler(BaseHTTPRequestHandler):
                )
                return
 
-           content_length = int(
-               self.headers.get("Content-Length", 0)
-           )
-
-           if content_length <= 0 or content_length > 5000:
+           try:
+               content_length = int(self.headers.get("Content-Length", 0))
+           except ValueError:
+               self.send_json(400, {"error": "Content-Length no válido."})
+               return
+           if content_length <= 0:
+               self.send_json(400, {"error": "El cuerpo de la petición está vacío."})
+               return
+           if content_length > MAX_BODY_BYTES:
                self.send_json(
                    413,
                    {"error": "Petición no válida o demasiado grande."}
@@ -108,22 +145,13 @@ class handler(BaseHTTPRequestHandler):
                body.decode("utf-8")
            )
 
-           message = str(
-               data.get("message", "")
-           ).strip()
-
-           if not message:
-               self.send_json(
-                   400,
-                   {"error": "Es necesario escribir un mensaje."}
-               )
+           try:
+               model_input = validate_input(data)
+           except ValueError as error:
+               self.send_json(400, {"error": str(error)})
                return
-
-           if len(message) > 1000:
-               self.send_json(
-                   400,
-                   {"error": "El mensaje supera los 1000 caracteres."}
-               )
+           except OverflowError as error:
+               self.send_json(413, {"error": str(error)})
                return
 
            api_key = os.environ.get(
@@ -144,8 +172,15 @@ class handler(BaseHTTPRequestHandler):
            response = client.responses.create(
                model="gpt-5.6-luna",
                instructions="""
-               Eres un asistente educativo especializado
-               en Tecnologías de Información y Comunicaciones.
+               Eres Nexo, un asistente educativo especializado en redes
+               de computadoras y ciberseguridad: TCP/IP, modelo OSI,
+               direccionamiento y subredes, DNS, enrutamiento, VLAN,
+               Wi-Fi, firewalls, criptografía, defensa y diagnóstico.
+               Adapta las explicaciones al nivel del usuario y utiliza
+               el historial disponible para responder preguntas de seguimiento.
+               Si falta contexto, pide el dato necesario sin inventarlo.
+               Orienta los ejercicios a laboratorios autorizados y protección
+               de sistemas. Explica el efecto de comandos y configuraciones.
                Responde siempre en español, de manera clara,
                breve y didáctica. Incluye ejemplos cuando ayuden
                a comprender el concepto.
@@ -155,7 +190,7 @@ class handler(BaseHTTPRequestHandler):
                el nombre del lenguaje y explica los ejemplos.
                Evita bloques largos de texto y no uses HTML.
                """,
-               input=message,
+               input=model_input,
                reasoning={
                    "effort": "none"
                },
@@ -170,7 +205,7 @@ class handler(BaseHTTPRequestHandler):
                }
            )
 
-       except json.JSONDecodeError:
+       except (json.JSONDecodeError, UnicodeDecodeError):
            self.send_json(
                400,
                {"error": "El cuerpo no contiene JSON válido."}
